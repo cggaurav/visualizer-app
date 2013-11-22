@@ -9,8 +9,8 @@ require([
   'visualizations/boids/simple',
   'visualizations/waveform-interp',
   'visualizations/raymarching',
-  'visualizations/beatdetection'
-//  'visualizations/sample'
+  'visualizations/beatdetection',
+  'visualizations/winamp'
 ], function (models, audio) {
   'use strict';
 
