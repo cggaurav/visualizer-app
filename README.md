@@ -2,6 +2,8 @@ Creating Winap like Vizualizations from the Sample App
 =================================
 
 Using the Milkdrop Plugin for Winamp
+[![Example](http://f.cl.ly/items/1S3R0Q2C320H2R0G372c/Screen%20Shot%202013-11-22%20at%2010.18.18%20PM.png)](http://f.cl.ly/items/2m2P2Z0W2G0G3L3J1I2n/Vizualizer.mov)
+
 [Here](http://www.nullsoft.com/free/milkdrop/)
 
 
