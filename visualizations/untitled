@@ -5,7 +5,7 @@
  * @type {Object} Visualization object
  */
 var vz = {
-  name      : 'Winamp',
+  name      : 'Winamp:Spiro',
   type      : 'visualization',
   tags      : ['canvas', '2d'],
   screen    : null,
@@ -93,6 +93,7 @@ vz.redraw = function (audio) {
 
   // console.log('audio', audio);
   var numVerts = 256 - 16;	
+  var time = 0;
   var lineScale = 1;
   var drawThick = true;
   var points = [];
@@ -113,6 +114,19 @@ vz.redraw = function (audio) {
   vz.ctx.beginPath();
   var i,j;
   
+
+  time +=1;
+  if(time > 10000000)
+  var cos_rot = cos(time*0.3);
+  var sin_rot = sin(time*0.3);
+
+  for (i=0; i<numVerts; i++) {
+  	var x0 = (waveDataR[i]*waveDataL[i+16] + waveDataL[i]*waveDataR[i+16]);
+  	var y0 = (waveDataR[i]*waveDataR[i] - waveDataL[i+16]*waveDataL[i+16]);
+  	var x = (x0*cos_rot - y0*sin_rot) + wavePosX;
+  	var y = (x0*sin_rot + y0*cos_rot) + wavePosY;
+  	points.push([x,y]);
+  }
   for (i=0,j=points.length;i<j;i++) {
   	var point = points[i];
   	if (i==0)

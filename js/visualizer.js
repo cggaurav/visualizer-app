@@ -10,7 +10,9 @@ require([
   'visualizations/waveform-interp',
   'visualizations/raymarching',
   'visualizations/beatdetection',
-  'visualizations/winamp'
+  'visualizations/winamp_spiro',
+  'visualizations/winamp_explosive',
+  'visualizations/winamp_dots'
 ], function (models, audio) {
   'use strict';
 
