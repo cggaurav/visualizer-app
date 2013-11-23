@@ -1,15 +1,14 @@
-Audio API - Sample Visualizer App
+Creating Winap like Vizualizations from the Sample App
 =================================
 
-This app is provided as an example to developers interested in the new Audio API.
-The goal of this app is to demonstrate how to use the Audio Api to create a Visualizer.
-By no means this is a finished product and is not inteded to be used in production.
-This is strictly a demo.
+Using the Milkdrop Plugin for Winamp
+[![Example](http://f.cl.ly/items/1S3R0Q2C320H2R0G372c/Screen%20Shot%202013-11-22%20at%2010.18.18%20PM.png)](http://f.cl.ly/items/2m2P2Z0W2G0G3L3J1I2n/Vizualizer.mov)
+
+[Here](http://www.nullsoft.com/free/milkdrop/)
+
 
 API
 ---
-
-For more information about the Audio API, please visit:
 
 https://developer.spotify.com/docs/apps/api/1.0/api-audio.html
 
