@@ -12,7 +12,9 @@ require([
   'visualizations/beatdetection',
   'visualizations/winamp_spiro',
   'visualizations/winamp_explosive',
-  'visualizations/winamp_dots'
+  'visualizations/winamp_dots',
+  // 'visualizations/winamp_fishbrain_betelguese'
+  'visualizations/winamp_zylot_psynoist'
 ], function (models, audio) {
   'use strict';
 
