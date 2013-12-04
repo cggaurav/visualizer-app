@@ -106,8 +106,6 @@ vz.redraw = function (audio) {
   	]);
   }
 
-
-
   vz.ctx.clearRect(0, 0, vz.width, vz.height);
   vz.ctx.scale(1,-1);
   
@@ -126,6 +124,44 @@ vz.redraw = function (audio) {
 			dotSize, dotSize
 		);
 	}
+	var waveSamples = 256 - 16;
+	var wavePosX = 0.5;
+	var wavePosY = 0.5;
+	var new_points = [];
+	var sample_offset = (waveSamples - numVerts) / 2 * 0.5;
+	var inv_nverts_minus_one = 1.0 / (numVerts-1);
+	for (var i=0;i<numVerts;i++) {
+		var ang = i * inv_nverts_minus_one * 6.28 + (new Date().getTime()) * 0.2;
+		var rad = 0.5 + 0.4 * audio.wave.right[i + sample_offset] + -0.380000;
+	
+		if (i < numVerts/10) {
+			var mix = i/(numVerts*0.1);
+			var mix = 0.5 - 0.5 * cos(mix * 3.1416);
+			var rad_2 = 0.5 + 0.4 * audio.wave.right[i + numVerts + sample_offset] + -0.380000;
+			rad = rad_2 * (1.0 - mix) + rad * (mix);
+		}
+		var x = cos(ang) * rad + wavePosX;
+		var y = sin(ang) * rad + wavePosY;
+	
+		new_points.push([x,y]);
+	}
+
+	vz.ctx.strokeStyle = '#'+'0123456789abcdef'.split('').map(function(v,i,a){return i>5 ? null : a[Math.floor(Math.random()*20)] }).join('');
+	vz.ctx.lineWidth = (drawThick ? 1.5 : 1) * lineScale;
+	vz.ctx.beginPath();
+	var i,j;
+	
+	for (i=0,j=new_points.length;i<j;i++) {
+		var point = new_points[i];
+		if (i==0)
+			vz.ctx.moveTo(point[0] * widthHalf + widthHalf, point[1] * heightHalf + heightHalf)
+		else{
+			vz.ctx.lineTo(point[0] * widthHalf + widthHalf, point[1] * heightHalf + heightHalf)
+			vz.ctx.lineTo(point[0] * widthHalf/5, point[1] * heightHalf/17 )
+			// vz.ctx.lineTo(point[0] * widthHalf - widthHalf, point[1] * heightHalf + heightHalf)
+		}
+	}
+	vz.ctx.stroke();
   
 };
 
