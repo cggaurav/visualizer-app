@@ -10,6 +10,7 @@ require([
   'visualizations/waveform-interp',
   'visualizations/raymarching',
   'visualizations/beatdetection',
+  'visualizations/winamp_test',
   'visualizations/winamp_spiro',
   'visualizations/winamp_explosive',
   'visualizations/winamp_dots',
