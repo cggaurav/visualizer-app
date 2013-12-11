@@ -51,79 +51,6 @@ vz.redraw = function (audio) {
   if (!vz.initialized) return;
 
   vz.JD.setAudioInput(audio);
-
-  // if (!vz.JD.isRunning())
-  //   vz.JD.start();
-  // console.log(audio);
-
-  // var d = new Date(),
-  //   t = d.getTime();
-
-  // vz.ctx.clearRect(0, 0, vz.cw, vz.ch); // clear canvas
-
-  // if (t % 1 === 0) {
-  //   var x, xl, xr, dxl, dxr;
-  //   var y, yl, yr, dyl, dyr;
-  //   var w, wl, wr;
-  //   var h, hl, hr;
-  //   var i, b, l, r;
-
-  //   vz.ctx.globalAlpha = vz.opacity; //(t % 10) * 0.1;
-
-
-  //   x = 0;
-  //   y = vz.hc;
-  //   hl = hr = 0;
-  //   w = (vz.cw - vz.band_count * vz.gap) / vz.band_count; // width of bar
-
-  //   for (i = 0; i < vz.band_count; i++) {
-  //     b = vz.bands[i];
-  //     l = parseFloat(audio.spectrum.left[i]);
-  //     r = parseFloat(audio.spectrum.right[i]);
-
-  //     hl = (vz.amp + l) * (vz.ch / 2 - 50) / vz.amp;
-  //     hr = (vz.amp + r) * (vz.ch / 2 - 50) / vz.amp;
-
-  //     dxl = x + (w * i) + i;
-  //     dyl = y - hl;
-  //     dxr = x + (w * i) + i;
-  //     dyr = y;
-
-  //     //left
-  //     vz.ctx.fillStyle = Visualizer.colorize(vz.bands[i]);
-  //     vz.ctx.fillRect(dxl, dyl - 0.5, w, hl);
-
-  //     // right
-  //     vz.ctx.fillStyle = Visualizer.colorize(vz.bands[i]);
-  //     vz.ctx.fillRect(dxr, dyr + 0.5, w, hr);
-  //   }
-  // }
-
-  // if (t % 1 === 0) {
-  //   vz.ctx.strokeStyle = 'rgb(255,255,255)';
-
-  //   // left
-  //   vz.drawPath(audio.spectrum, -280, 0);
-  //   vz.drawPath(audio.spectrum, -180, 0);
-  //   vz.drawPath(audio.spectrum, -100, 0);
-  //   vz.drawPath(audio.spectrum, -10, 0);
-  //   vz.drawPath(audio.spectrum, 0, 0);
-  //   vz.drawPath(audio.spectrum, 10, 0);
-  //   vz.drawPath(audio.spectrum, 20, 0);
-  //   vz.drawPath(audio.spectrum, 30, 0);
-  //   vz.drawPath(audio.spectrum, 40, 0);
-
-  //   // right
-  //   vz.drawPath(audio.spectrum, -280, 1);
-  //   vz.drawPath(audio.spectrum, -180, 1);
-  //   vz.drawPath(audio.spectrum, -100, 1);
-  //   vz.drawPath(audio.spectrum, -10, 1);
-  //   vz.drawPath(audio.spectrum, 0, 1);
-  //   vz.drawPath(audio.spectrum, 10, 1);
-  //   vz.drawPath(audio.spectrum, 20, 1);
-  //   vz.drawPath(audio.spectrum, 30, 1);
-  //   vz.drawPath(audio.spectrum, 40, 1);
-  // }
 };
 
 /**
@@ -164,8 +91,13 @@ vz.start = function (options) {
   soundManager.debugMode = false;
   JuicyDrop.prepareSM2(soundManager);
 
-  console.log("VZ", vz);
   vz.JD = new JuicyDrop(vz.screen, options.width, options.height);
+  console.log("VZ.JD", vz.JD);
+  vz.JD.loadMilkDrop("", function(){});
+  vz.JD.start();
+  // if (!vz.JD.isRunning())
+  //   vz.JD.start();
+
 
 };
 
@@ -239,43 +171,6 @@ vz.resize = function (width, height) {
   vz.canvas.width = vz.cw;
   vz.canvas.height = vz.ch;
 };
-
-/**
- * Make some lines
- * @param s
- * @param offset
- * @param lr
- */
-vz.drawPath = function (s, offset, lr) {
-  var y, rh, lh, i, b, l, r;
-
-  vz.ctx.beginPath();
-  vz.ctx.moveTo(0, vz.hc);
-
-  for (i = 0; i < vz.band_count; i++) {
-    b = vz.bands[i];
-    l = parseFloat(s.left[i]);
-    r = parseFloat(s.right[i]);
-//        ctx.strokeStyle = spectrum.color(_options.bands[i]);
-    if (lr) {
-      // right
-      y = vz.hc + ((vz.amp + r) * (vz.ch / 2 - 50) / vz.amp) + offset;
-      y = y > vz.hc ? y : vz.hc;
-      vz.ctx.lineTo(i * vz.nP, y);
-      vz.ctx.lineTo(i * vz.nP + vz.nP, y);
-    } else {
-      // left
-      y = vz.hc - ((vz.amp + l) * (vz.ch / 2 - 50) / vz.amp) - offset;
-      y = y < vz.hc ? y : vz.hc;
-      vz.ctx.lineTo(i * vz.nP, y);
-      vz.ctx.lineTo(i * vz.nP + vz.nP, y);
-    }
-  }
-
-  vz.ctx.lineTo(vz.cw, vz.hc);
-  vz.ctx.stroke();
-};
-
 
 // Export API
 exports.name    = vz.name;
@@ -1973,6 +1868,7 @@ var JuicyDrop = (function() {
 
     count += 1;
     juice.position = count;
+    console.log("JUICE", juice);
 
   }
 
@@ -2052,7 +1948,8 @@ var JuicyDrop = (function() {
       if (music) {
         music.whileplaying = null;
       }
-      music = audio;
+      // music = audio;
+      music = {};
 
       music.juice = {
         frameCount : 0,
@@ -2071,7 +1968,7 @@ var JuicyDrop = (function() {
         music.juice.avgFreqBands[i] = 0;
         music.juice.longAvgFreqBands[i] = 0;
       }
-      music.whileplaying = analyzeSound(audio);
+      music.whileplaying = analyzeSound;
     }
 
     this.getAudioInput = function() {
@@ -2222,8 +2119,8 @@ var JuicyDrop = (function() {
     var frameHist = [];
 
     function renderCycle() {
-      // console.log("PRESET", preset);
-      // console.log("MUSIC", music);
+      console.log("PRESET", preset);
+      console.log("MUSIC", music);
       if (preset && music.juice.waveDataL && music.juice.frameCount != lastFrameCount) {
         var time = new Date().getTime();
 
