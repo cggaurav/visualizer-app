@@ -47,10 +47,27 @@ var vz = {
  * Redraw Visualization
  * @param audio
  */
+var setAudioInputflag = true;
 vz.redraw = function (audio) {
   if (!vz.initialized) return;
 
-  vz.JD.setAudioInput(audio);
+  vz.JD.toggleDebug();
+  // if(setAudioInputflag){
+    vz.JD.setAudioInput(audio);
+    // setAudioInputflag = false;  
+  // }
+  
+  if (!vz.JD.isRunning()){
+    vz.JD.start()
+  }
+  // if (!vz.JD.isRunning()){
+  //   vz.JD.setAudioInput(audio);
+  //   vz.JD.start();
+  // }
+  // else{
+  //   vz.JD.setAudioInput(audio);  
+  // }
+  
 };
 
 /**
@@ -94,10 +111,8 @@ vz.start = function (options) {
   vz.JD = new JuicyDrop(vz.screen, options.width, options.height);
   console.log("VZ.JD", vz.JD);
   vz.JD.loadMilkDrop("", function(){});
-  vz.JD.start();
-  // if (!vz.JD.isRunning())
-  //   vz.JD.start();
 
+  
 
 };
 
@@ -189,6 +204,74 @@ By Jacob Seidelin, http://blog.nihilogic.dk/
 */
 
 var JuicyDrop = (function() {
+  var presetVariables = [];
+
+  var customWaves = [];
+  var customShapes = [];
+
+  var variables = {
+    fRating     : 1,
+    fDecay      : 1,
+    zoom      : 1,
+    fZoomExponent   : 1,
+    fGammaAdj   : 1,
+    fVideoEchoZoom    : 1,
+    fVideoEchoAlpha   : 0,
+    nVideoEchoOrientation : 0,
+    nWaveMode   : 0,
+    fWaveAlpha    : 0,
+    fWaveScale    : 1,
+    fWaveSmoothing    : 0,
+    fWaveParam    : 0,
+    bAdditiveWaves    : 0,
+    bWaveDots   : 0,
+    bWaveThick    : 0,
+    bModWaveAlphaByVolume : 0,
+    bMaximizeWaveColor  : 1,
+    bTexWrap    : 0,
+    bDarkenCenter   : 0,
+    bRedBlueStereo    : 0,
+    bBrighten   : 0,
+    bDarken     : 0,
+    bSolarize   : 0,
+    bInvert     : 0,
+    fModWaveAlphaStart  : 0,
+    fModWaveAlphaEnd  : 0,
+    fWarpAnimSpeed    : 1,
+    fWarpScale    : 1,
+    fShader     : 0,
+    rot     : 0,
+    cx      : 0.5,
+    cy      : 0.5,
+    dx      : 0,
+    dy      : 0,
+    warp      : 0,
+    sx      : 1,
+    sy      : 1,
+    wave_r      : 0,
+    wave_g      : 0,
+    wave_b      : 0,
+    wave_a      : 0,
+    wave_x      : 0,
+    wave_y      : 0,
+    ob_size     : 1,
+    ob_r      : 0,
+    ob_g      : 0,
+    ob_b      : 0,
+    ob_a      : 0,
+    ib_size     : 1,
+    ib_r      : 0,
+    ib_g      : 0,
+    ib_b      : 0,
+    ib_a      : 0,
+    mv_dx     : 0, 
+    mv_dy     : 0, 
+    mv_l      : 0,
+    mv_r      : 0,
+    mv_g      : 0,
+    mv_b      : 0,
+    mv_a      : 0
+  };
 
   var max = Math.max;
   var min = Math.min;
@@ -1206,74 +1289,6 @@ var JuicyDrop = (function() {
     function addPresetVariable(varname, value) {
       presetVariables.push([varname, value]);
     }
-    var presetVariables = [];
-
-    var customWaves = [];
-    var customShapes = [];
-
-    var variables = {
-      fRating     : 1,
-      fDecay      : 1,
-      zoom      : 1,
-      fZoomExponent   : 1,
-      fGammaAdj   : 1,
-      fVideoEchoZoom    : 1,
-      fVideoEchoAlpha   : 0,
-      nVideoEchoOrientation : 0,
-      nWaveMode   : 0,
-      fWaveAlpha    : 0,
-      fWaveScale    : 1,
-      fWaveSmoothing    : 0,
-      fWaveParam    : 0,
-      bAdditiveWaves    : 0,
-      bWaveDots   : 0,
-      bWaveThick    : 0,
-      bModWaveAlphaByVolume : 0,
-      bMaximizeWaveColor  : 1,
-      bTexWrap    : 0,
-      bDarkenCenter   : 0,
-      bRedBlueStereo    : 0,
-      bBrighten   : 0,
-      bDarken     : 0,
-      bSolarize   : 0,
-      bInvert     : 0,
-      fModWaveAlphaStart  : 0,
-      fModWaveAlphaEnd  : 0,
-      fWarpAnimSpeed    : 1,
-      fWarpScale    : 1,
-      fShader     : 0,
-      rot     : 0,
-      cx      : 0.5,
-      cy      : 0.5,
-      dx      : 0,
-      dy      : 0,
-      warp      : 0,
-      sx      : 1,
-      sy      : 1,
-      wave_r      : 0,
-      wave_g      : 0,
-      wave_b      : 0,
-      wave_a      : 0,
-      wave_x      : 0,
-      wave_y      : 0,
-      ob_size     : 1,
-      ob_r      : 0,
-      ob_g      : 0,
-      ob_b      : 0,
-      ob_a      : 0,
-      ib_size     : 1,
-      ib_r      : 0,
-      ib_g      : 0,
-      ib_b      : 0,
-      ib_a      : 0,
-      mv_dx     : 0, 
-      mv_dy     : 0, 
-      mv_l      : 0,
-      mv_r      : 0,
-      mv_g      : 0,
-      mv_b      : 0,
-      mv_a      : 0
-    };
 
     for (var i=0;i<presetLines.length;i++) {
       var line = presetLines[i];
@@ -1379,7 +1394,7 @@ var JuicyDrop = (function() {
       // some variables found in some of the presets that wouldn't get declared otherwise
       var dx_r = 0, dy_r = 0, treble = 0, bass_thresh = 0, treb_thresh = 0, mid_thresh = 0, 
         thresh = 0, lbass = 0, lmid = 0, ltreb = 0, att = 0, xpos = 0, ypos = 0, x_pos = 0, y_pos = 0;
-      var radical_dx = 0, radical_dy = 0, z = 0;
+      var radical_dx = 0, radical_dy = 0, z = 0, rot, wave_dots, wave_thick, additive, gamma;
 
       for (var i=0;i<presetVariables.length;i++) {
         eval("var " + presetVariables[i][0] + " = " + presetVariables[i][1]);
@@ -1390,6 +1405,7 @@ var JuicyDrop = (function() {
       var pixelVars = {};
 
       this.nextFrame = function(frameData) {
+
         // import frame variables
         bass = frameData.bass_rel;
         mid = frameData.mid_rel;
@@ -1721,8 +1737,10 @@ var JuicyDrop = (function() {
       fps : fps
     }
 
+
     var vars = preset.nextFrame(frameData);
 
+    
     var sx = vars.sx;
     var sy = vars.sy;
     var dx = vars.dx;
@@ -1732,7 +1750,6 @@ var JuicyDrop = (function() {
     var zoom = vars.zoom;
     var rot = vars.rot;
     var decay = vars.decay;
-
     var width = settings.width;
     var height = settings.height;
     var lineScale = settings.lineScale;
@@ -1792,7 +1809,7 @@ var JuicyDrop = (function() {
 
   var count = 0;
 
-  function analyzeSound(audio) {
+  function analyzeSound(audio, music) {
     var juice = audio;
     // var juice = this.juice;
 
@@ -1804,26 +1821,28 @@ var JuicyDrop = (function() {
     var eqData = juice.spectrum;
     var peakData = juice.spectrum;
 
-    if (waveData.right.length == 512) {
+    if (waveData.right.length > 0) {
+      // console.log("WAVE");
       juice.waveDataL = waveData.left;
       juice.waveDataR = waveData.right;
     } else {
       juice.waveDataL = juice.waveDataR = juice.waveData;
     }
 
-    if (eqData.right.length == 512) {
+    if (eqData.right.length > 0) {
+      // console.log("EQ");
       juice.eqDataL = eqData.left;
       juice.eqDataR = eqData.right;
     } else {
       juice.eqDataL = juice.eqDataR = juice.eqData;
     }
 
-    var freqBands = juice.freqBands || juice.spectrum;
-    var freqBands16 = juice.freqBands16 || juice.spectrum;
-    var avgFreqBands = juice.avgFreqBands || juice.spectrum;
-    var longAvgFreqBands = juice.longAvgFreqBands || juice.spectrum;
-    var relFreqBands = juice.relFreqBands || juice.spectrum;
-    var avgRelFreqBands = juice.avgRelFreqBands || juice.spectrum;
+    var freqBands = juice.freqBands || [];
+    var freqBands16 = juice.freqBands16 || [];
+    var avgFreqBands = juice.avgFreqBands || [];
+    var longAvgFreqBands = juice.longAvgFreqBands || [];
+    var relFreqBands = juice.relFreqBands || [];
+    var avgRelFreqBands = juice.avgRelFreqBands || [];
 
     for (var i=0;i<numFreqBands;i++) {
       freqBands[i] = 0;
@@ -1839,7 +1858,6 @@ var JuicyDrop = (function() {
       freqBands16[(i/8)>>0] += eqData[i];
     }
 
-    juice.frameCount++;
 
     for (var i=0;i<numFreqBands;i++) {
 
@@ -1866,8 +1884,17 @@ var JuicyDrop = (function() {
       }
     }
 
+    
+    juice.freqBands = freqBands
+    juice.freqBands16 = freqBands16
+    juice.avgFreqBands = avgFreqBands
+    juice.longAvgFreqBands = longAvgFreqBands
+    juice.relFreqBands = relFreqBands
+    juice.avgRelFreqBands = avgRelFreqBands
     count += 1;
     juice.position = count;
+    juice.frameCount = count;
+    music.juice = juice;
     console.log("JUICE", juice);
 
   }
@@ -1948,8 +1975,7 @@ var JuicyDrop = (function() {
       if (music) {
         music.whileplaying = null;
       }
-      // music = audio;
-      music = {};
+      music = audio;
 
       music.juice = {
         frameCount : 0,
@@ -1969,6 +1995,7 @@ var JuicyDrop = (function() {
         music.juice.longAvgFreqBands[i] = 0;
       }
       music.whileplaying = analyzeSound;
+      music.whileplaying(audio, music);
     }
 
     this.getAudioInput = function() {
@@ -2082,7 +2109,9 @@ var JuicyDrop = (function() {
       per_frame_7=zoom=zoom+(bass_att-1)*0.1;"
 
       preset = parseMilk(milkString);
-      console.log("PARSEMILK", parseMilk(milkString));
+      isMilkDrop = true;
+      presetUrl = "";
+      console.log("PARSEMILK", preset);
       if(callback)
         callback();
 
@@ -2119,8 +2148,9 @@ var JuicyDrop = (function() {
     var frameHist = [];
 
     function renderCycle() {
-      console.log("PRESET", preset);
-      console.log("MUSIC", music);
+      // console.log("RENDERCYCLE:PRESET", preset);
+      console.log("RENDERCYCLE:MUSIC:JUICE:L", music.juice.waveDataL);
+      console.log("RENDERCYCLE:MUSIC:JUICE:FC", music.juice.frameCount);
       if (preset && music.juice.waveDataL && music.juice.frameCount != lastFrameCount) {
         var time = new Date().getTime();
 
