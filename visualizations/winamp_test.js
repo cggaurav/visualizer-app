@@ -51,9 +51,9 @@ var setAudioInputflag = true;
 vz.redraw = function (audio) {
   if (!vz.initialized) return;
 
-  vz.JD.toggleDebug();
+  // vz.JD.toggleDebug();
   // if(setAudioInputflag){
-    vz.JD.setAudioInput(audio);
+  vz.JD.setAudioInput(audio);
     // setAudioInputflag = false;  
   // }
   
@@ -922,12 +922,14 @@ var JuicyDrop = (function() {
 
   // draws the basic waveform
   function drawWave(soundData, ctx, settings, frameData, screenWidth, screenHeight, lineScale) {
+    console.log(arguments, "drawWave()");
+    // if (settings.color[3] < 0.001)
+    //   return;
 
-    if (settings.color[3] < 0.001)
-      return;
+    console.log(soundData, "SD");
+    var waveDataL = soundData.waveDataL;
+    var waveDataR = soundData.waveDataR;
 
-    var waveDataL = soundData.waveDataL.slice(0);
-    var waveDataR = soundData.waveDataR.slice(0);
 
     var scale = settings.waveScale;
     waveDataL[0] *= scale;
@@ -957,10 +959,12 @@ var JuicyDrop = (function() {
       height*settings.center.y
     );
 
-    var r = settings.color[0];
-    var g = settings.color[1];
-    var b = settings.color[2];
+    var r = settings.color[0] == 0 ? Math.random(): settings.color[0];
+    var g = settings.color[1] == 0 ? Math.random(): settings.color[1];
+    var b = settings.color[2] == 0 ? Math.random(): settings.color[2];
 
+
+    // console.log(r,g,b);
     if (settings.maximizeColor) {
       if (r > g && r > b) {
         var scale = 1 / r;
@@ -1208,15 +1212,21 @@ var JuicyDrop = (function() {
     if (alpha < 0) alpha = 0;
     if (alpha > 1) alpha = 1;
 
-    var color = "rgba(" + (r*255>>0) + "," + (g*255>>0) + "," + (b*255>>0) + "," + alpha + ")";
+    // var color = "rgba(" + (r*255>>0) + "," + (g*255>>0) + "," + (b*255>>0) + "," + alpha + ")";
 
+    var color = "#";
+    for (var k = 0; k < 3; k++) {
+        color += ("0" + (Math.random()*256|0).toString(16)).substr(-2);
+    }
     if (settings.additive)
       ctx.globalCompositeOperation = "lighter";
 
     var widthHalf = width * 0.5;
     var heightHalf = height * 0.5;
 
-    if (settings.drawAsDots) {
+    // console.log(points);
+    if (settings.drawAsDots || 1) {
+      console.log("DRAWASDOTS");
       ctx.fillStyle = color;
       var dotSize = settings.drawThick ? 2.5 : 1.5;
 
@@ -1229,6 +1239,7 @@ var JuicyDrop = (function() {
         );
       }
     } else {
+      console.log("DRAWASDOTS:NO");
       ctx.scale(1,-1);
       ctx.strokeStyle = color;
       ctx.lineWidth = (settings.drawThick ? 1.5 : 1) * lineScale;
@@ -1394,7 +1405,7 @@ var JuicyDrop = (function() {
       // some variables found in some of the presets that wouldn't get declared otherwise
       var dx_r = 0, dy_r = 0, treble = 0, bass_thresh = 0, treb_thresh = 0, mid_thresh = 0, 
         thresh = 0, lbass = 0, lmid = 0, ltreb = 0, att = 0, xpos = 0, ypos = 0, x_pos = 0, y_pos = 0;
-      var radical_dx = 0, radical_dy = 0, z = 0, rot, wave_dots, wave_thick, additive, gamma;
+      var radical_dx = 0, radical_dy = 0, z = 0, rot = 0, wave_dots = 0, wave_thick =0, additive = 0, gamma =0;
 
       for (var i=0;i<presetVariables.length;i++) {
         eval("var " + presetVariables[i][0] + " = " + presetVariables[i][1]);
@@ -1766,13 +1777,18 @@ var JuicyDrop = (function() {
 
     var screenCanvas = ctx.canvas;
 
-    if (settings.drawCustomShapes)
+    if (settings.drawCustomShapes){
+      console.log("CustomShapes")
       drawCustomShapes(ctx, preset, vars, settings);
+    }
 
-    if (settings.drawCustomWaves)
+    if (settings.drawCustomWaves){
+      console.log("CustomWaves")
       drawCustomWaves(ctx, preset, vars, settings, soundData, frameData);
+    }
 
     if (settings.drawWaveform) {
+      console.log("WaveForm")
       var stdWave = {
         color : [vars.wave_r, vars.wave_g, vars.wave_b, vars.wave_a],
         additive : vars.additive,
@@ -1793,17 +1809,25 @@ var JuicyDrop = (function() {
       drawWave(soundData, ctx, stdWave, frameData, width, height, lineScale)
     }
 
-    if (settings.drawMotionVectors)
+    if (settings.drawMotionVectors){
+      console.log("MotionVectors")
       drawMotionVectors(ctx, preset, vars, settings);
+    }
 
-    if (settings.drawBorders)
+    if (settings.drawBorders){
+      console.log("Borders")
       drawBorders(ctx, preset, vars, settings);
+    }
 
-    if (settings.drawPerPixelEffects)
+    if (settings.drawPerPixelEffects){
+      console.log("PPE")
       drawPerPixelEffects(ctx, pixelCtx, overlayCtx, preset, vars, settings, frameData)
+    }
 
-    if (settings.drawVideoEcho)
+    if (settings.drawVideoEcho){
+      console.log("VideoEcho")
       drawVideoEcho(ctx, copyCtx, preset, vars, settings);
+    }
   }
 
 
@@ -1895,7 +1919,7 @@ var JuicyDrop = (function() {
     juice.position = count;
     juice.frameCount = count;
     music.juice = juice;
-    console.log("JUICE", juice);
+    // console.log("JUICE", juice);
 
   }
 
@@ -2149,8 +2173,8 @@ var JuicyDrop = (function() {
 
     function renderCycle() {
       // console.log("RENDERCYCLE:PRESET", preset);
-      console.log("RENDERCYCLE:MUSIC:JUICE:L", music.juice.waveDataL);
-      console.log("RENDERCYCLE:MUSIC:JUICE:FC", music.juice.frameCount);
+      // console.log("RENDERCYCLE:MUSIC:JUICE:L", music.juice.waveDataL);
+      // console.log("RENDERCYCLE:MUSIC:JUICE:FC", music.juice.frameCount);
       if (preset && music.juice.waveDataL && music.juice.frameCount != lastFrameCount) {
         var time = new Date().getTime();
 
@@ -2169,9 +2193,9 @@ var JuicyDrop = (function() {
           totalFrameTime += frameHist[i];
         }
         fps = 1000 * frameHist.length / totalFrameTime;
-        console.log("A");
+        // console.log("A");
       }
-      console.log("B")
+      // console.log("B")
       var now = new Date().getTime();
       var timeToNext = targetFrameRate;
       var lastFrameTime = now - lastRenderTime;
